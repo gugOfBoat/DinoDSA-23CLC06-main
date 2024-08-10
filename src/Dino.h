@@ -4,6 +4,7 @@
 #include "C:\\raylib\\raylib\\src\\raylib.h"
 #include "HP.h"
 #include <vector> 
+#include <cstddef>
 
 class Dino {
 public:
@@ -25,7 +26,7 @@ private:
     int speed;
     HP* hp;
 
-    int currentFrame;
+    size_t currentFrame;
     int frameCounter;
     int frameSpeed;
 

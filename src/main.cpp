@@ -1,8 +1,8 @@
 #include "C:\\raylib\\raylib\\src\\raylib.h"
 #include "Dino.h"
 
-const int windowWidth = 1000;
-const int windowHeight = 600;
+const float windowWidth = 1000;
+const float windowHeight = 600;
 
 int main()
 {
