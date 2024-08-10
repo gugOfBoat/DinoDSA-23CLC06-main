@@ -11,6 +11,7 @@ class MovingObject {
         Vector2 position;
         Texture2D frame;
         const int speed;
+        Texture2D frame;
 
     public:
         MovingObject(Vector2 pos, Texture2D tex, int spd);
@@ -20,6 +21,7 @@ class MovingObject {
         Rectangle GetRect() const; // Trả về hình chữ nhật bao quanh đối tượng
         virtual bool IsCollision(Dino* dino) const; // Kiểm tra va chạm với Dino
         virtual bool Collected(Dino* dino) = 0;
+        void Draw();
 };
 
 // Lớp Item kế thừa từ MovingObject

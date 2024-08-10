@@ -2,7 +2,8 @@
 
 // Triển khai các phương thức của MovingObject
 MovingObject::MovingObject(Vector2 pos, Texture2D tex, int spd)
-    : position(pos), frame(tex), speed(spd) {}
+    : position(pos), frame(tex), speed(spd) {
+}
 
 MovingObject::~MovingObject() {
     // Giải phóng tài nguyên của frame nếu cần
@@ -23,6 +24,11 @@ bool MovingObject::IsCollision(Dino* dino) const {
     return CheckCollisionRecs(objectRect, dinoRect);
 }
 
+void MovingObject::Draw()
+{
+    DrawTextureV(frame, position, WHITE);
+}
+
 // Triển khai các phương thức của Item
 Item::Item(Vector2 pos, Texture2D tex, int spd)
     : MovingObject(pos, tex, spd) {}
@@ -39,7 +45,9 @@ bool Shield::Collected(Dino* dino) {
 
 // Triển khai các phương thức của Apple
 Apple::Apple(Vector2 pos, Texture2D tex, int spd)
-    : Item(pos, tex, spd) {}
+    : Item(pos, tex, spd) {
+        frame = LoadTexture("Graphics/apple.png");
+    }
 
 bool Apple::Collected(Dino* dino) {
     // Tăng HP
@@ -49,7 +57,9 @@ bool Apple::Collected(Dino* dino) {
 
 // Triển khai các phương thức của Trap
 Trap::Trap(Vector2 pos, Texture2D tex, int spd)
-    : MovingObject(pos, tex, spd) {}
+    : MovingObject(pos, tex, spd) {
+        frame = LoadTexture("Graphics/cactus.png");
+    }
 
 bool Trap::Collected(Dino* dino) {
     // Giảm HP
