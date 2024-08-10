@@ -118,7 +118,8 @@
     "text_encoding": "cpp",
     "cinttypes": "cpp",
     "typeinfo": "cpp",
-    "variant": "cpp"
+    "variant": "cpp",
+    "sstream": "cpp"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }
