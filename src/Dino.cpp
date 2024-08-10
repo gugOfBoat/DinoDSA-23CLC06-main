@@ -43,7 +43,7 @@ void Dino::Draw() {
 
 void Dino::Update() {
     // Xử lý việc nhấn phím nhảy (SPACE)
-    if (IsKeyPressed(KEY_SPACE) && !isJumping) {
+    if ((IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_UP)) && !isJumping) {
         isJumping = true;
         jumpVelocity = -25.0f;  // Thiết lập tốc độ nhảy ban đầu
     }
