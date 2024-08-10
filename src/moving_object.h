@@ -11,7 +11,6 @@ class MovingObject {
         Vector2 position;
         Texture2D frame;
         const int speed;
-        Texture2D frame;
 
     public:
         MovingObject(Vector2 pos, Texture2D tex, int spd);

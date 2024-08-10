@@ -12,6 +12,9 @@ MovingObject::~MovingObject() {
 
 void MovingObject::Update() {
     position.x -= speed; // Di chuyển sang trái
+    if (position.x <= 0){
+        position.x = 1000;
+    }
 }
 
 Rectangle MovingObject::GetRect() const {
@@ -46,7 +49,7 @@ bool Shield::Collected(Dino* dino) {
 // Triển khai các phương thức của Apple
 Apple::Apple(Vector2 pos, Texture2D tex, int spd)
     : Item(pos, tex, spd) {
-        frame = LoadTexture("Graphics/apple.png");
+        // tex = LoadTexture("Graphics/apple.png");
     }
 
 bool Apple::Collected(Dino* dino) {
@@ -58,7 +61,6 @@ bool Apple::Collected(Dino* dino) {
 // Triển khai các phương thức của Trap
 Trap::Trap(Vector2 pos, Texture2D tex, int spd)
     : MovingObject(pos, tex, spd) {
-        frame = LoadTexture("Graphics/cactus.png");
     }
 
 bool Trap::Collected(Dino* dino) {
