@@ -2,9 +2,14 @@
 #define DEQUE_H
 
 template <class DataType>
+class DequeNode;
+template <class DataType>
+class Deque;
+
+template <class DataType>
 class DequeNode
 {
-    friend class Deque;
+    friend class Deque<DataType>;
 private:
     DataType data;
     DequeNode *next;
