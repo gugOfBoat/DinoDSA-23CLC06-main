@@ -1,7 +1,7 @@
 #include "Dino.h"
 
 // Constructor của lớp Dino, khởi tạo các giá trị ban đầu
-Dino::Dino() {
+Dino::Dino() : HP(100, "Graphics/heart.png") {
     // Tải các hình ảnh frame của Dino từ file ảnh và lưu vào vector frames
     frames.push_back(LoadTexture("Graphics/dino0.png"));
     frames.push_back(LoadTexture("Graphics/dino1.png"));
@@ -11,7 +11,6 @@ Dino::Dino() {
     position.y = 550;  // Đặt vị trí ban đầu của Dino trên trục y là 550
 
     speed = 10;  // Tốc độ di chuyển của Dino
-    hp = new HP(100, "Graphics/heart.png");  // Khởi tạo đối tượng HP với 100 máu và hình ảnh trái tim
 
     currentFrame = 0;  // Khung hình hiện tại của animation
     frameCounter = 0;  // Bộ đếm số frame đã qua
@@ -32,7 +31,6 @@ Dino::~Dino() {
     for (auto &frame : frames) {  
         UnloadTexture(frame);
     }
-    delete hp;  // Giải phóng bộ nhớ của đối tượng HP
 }
 
 // Phương thức vẽ Dino lên màn hình
@@ -96,20 +94,17 @@ void Dino::DrawHitbox(bool isColliding) {
 // Phương thức giảm máu của Dino khi bị tấn công
 void Dino::TakeDamage(int damage) {
     if (!isInvincible) {  // Nếu Dino không trong trạng thái vô địch
-        hp->Decrease(damage);  // Giảm máu theo giá trị `damage`
+        Decrease(damage);  // Giảm máu theo giá trị `damage`
         ActivateInvincibility(1.0f);  // Kích hoạt trạng thái vô địch trong 1 giây sau khi bị tấn công
     }
 }
 
 // Phương thức kiểm tra Dino có chết không (máu có cạn không)
 bool Dino::isDead() {
-    return hp->IsEmpty();  // Trả về true nếu lượng máu bằng 0 hoặc ít hơn
+    return IsEmpty();  // Trả về true nếu lượng máu bằng 0 hoặc ít hơn
 }
 
-// Phương thức vẽ thanh máu của Dino lên màn hình
-void Dino::DrawHP() {
-    hp->Draw();  
-}
+
 
 // Phương thức kích hoạt trạng thái bất tử
 void Dino::ActivateInvincibility(float duration) {

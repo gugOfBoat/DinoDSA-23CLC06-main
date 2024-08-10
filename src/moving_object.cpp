@@ -31,9 +31,9 @@ Item::Item(Vector2 pos, Texture2D tex, int spd)
 Shield::Shield(Vector2 pos, Texture2D tex, int spd)
     : Item(pos, tex, spd) {}
 
-bool Shield::Collected() {
+bool Shield::Collected(Dino* dino) {
     // Kích hoạt trạng thái bất tử
-    ActivateInvincibility(5.0f);
+    dino->ActivateInvincibility(5.0f);
     return true;
 }
 
@@ -41,9 +41,9 @@ bool Shield::Collected() {
 Apple::Apple(Vector2 pos, Texture2D tex, int spd)
     : Item(pos, tex, spd) {}
 
-bool Apple::Collected() {
+bool Apple::Collected(Dino* dino) {
     // Tăng HP
-    HP::Increase(50);
+    dino->Increase(50);
     return true;
 }
 
@@ -51,8 +51,8 @@ bool Apple::Collected() {
 Trap::Trap(Vector2 pos, Texture2D tex, int spd)
     : MovingObject(pos, tex, spd) {}
 
-bool Trap::Collected() {
+bool Trap::Collected(Dino* dino) {
     // Giảm HP
-    DecreaseHP();
+    dino->Decrease(50);
     return true;
 }

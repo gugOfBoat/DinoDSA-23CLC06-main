@@ -13,8 +13,16 @@ HP::~HP() {
     UnloadTexture(heartTexture);  // Giải phóng bộ nhớ 
 }
 
+void HP::resetHP()
+{
+    if (currentHP < 0)
+        currentHP = 0;
+    else if (currentHP > maxHP)
+        currentHP = maxHP;
+}
+
 // Phương thức để vẽ biểu tượng trái tim lên màn hình, đại diện cho lượng máu hiện tại
-void HP::Draw() {
+void HP::DrawHP() {
     for (int i = 0; i < currentHP / 50; i++) {  // Lặp qua mỗi đơn vị 50 HP (mỗi trái tim đại diện cho 50 HP)
         // Mỗi trái tim được vẽ cách nhau một khoảng cách là `heartTexture.width + 10` pixels.
         DrawTexture(heartTexture, position.x - i * (heartTexture.width + 10), position.y, WHITE);
@@ -24,7 +32,12 @@ void HP::Draw() {
 // Phương thức để giảm lượng máu hiện tại
 void HP::Decrease(int amount) {
     currentHP -= amount;  // Giảm currentHP theo giá trị `amount` truyền vào
-    if (currentHP < 0) currentHP = 0;  // Nếu currentHP nhỏ hơn 0, đặt nó về 0 để tránh giá trị âm
+    resetHP();
+}
+
+void HP::Increase(int amount) {
+    currentHP += amount;  // Tăng currentHP theo giá trị `amount` truyền vào
+    resetHP();
 }
 
 // Phương thức trả về lượng máu hiện tại

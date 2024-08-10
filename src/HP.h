@@ -7,8 +7,9 @@ class HP {
 public:
     HP(int initialHP, const char* heartImagePath);
     ~HP();
-    void Draw();
+    void DrawHP();
     void Decrease(int amount);
+    void Increase(int amount);
     int GetCurrentHP() const;
     bool IsEmpty() const;
 
@@ -17,6 +18,7 @@ private:
     int currentHP;
     Texture2D heartTexture;
     Vector2 position; 
+    void resetHP();
 };
 
 #endif 

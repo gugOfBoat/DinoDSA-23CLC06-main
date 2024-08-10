@@ -6,7 +6,7 @@
 #include <vector> 
 #include <cstddef>
 
-class Dino {
+class Dino : public HP {
 public:
     Dino();
     ~Dino();
@@ -16,7 +16,6 @@ public:
     void DrawHitbox(bool isColliding);
     void TakeDamage(int damage);
     bool isDead();
-    void DrawHP();
     void ActivateInvincibility(float duration); // Activate invincibility for a certain duration
     bool IsInvincible() const; // Check if Dino is currently invincible
 
@@ -24,7 +23,6 @@ private:
     std::vector<Texture2D> frames;
     Vector2 position;
     int speed;
-    HP* hp;
 
     size_t currentFrame;
     int frameCounter;
