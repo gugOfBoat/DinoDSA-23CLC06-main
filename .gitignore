@@ -1,5 +1,4 @@
 *.exe
 *.dsym
 main
-.vscode
 *.txt
