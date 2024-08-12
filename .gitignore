@@ -2,4 +2,4 @@
 *.dsym
 main
 .vscode
-topscores.txt
+*.txt
