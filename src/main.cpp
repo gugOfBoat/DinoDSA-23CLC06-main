@@ -10,32 +10,24 @@ const float windowWidth = 1000;
 const float windowHeight = 600;
 
 int score = 0;
-std::vector<int> topScores;
+int topscore;
 
 void LoadTopScores() {
     std::ifstream inFile("src/topscores.txt");
-    int s;
-    while(inFile >> s){
-        topScores.push_back(s);
-    }
+    if (!(inFile >> topscore))
+        topscore = 0;
     inFile.close();
 }
 
-void SaveTopScores() {
+void UpdateTopScores(int newscore)
+{
     std::ofstream outFile("src/topscores.txt");
-    for (int s : topScores){
-        outFile << s << std :: endl;
+    if (score > topscore)
+    {
+        topscore = score;
+        outFile << topscore;
     }
     outFile.close();
-}
-
-void UpdateTopScores(int newScore){
-    topScores.push_back(newScore);
-    std::sort(topScores.begin(), topScores.end(), std::greater<int>());
-    if (topScores.size() > 5){
-        topScores.pop_back();
-    }
-    SaveTopScores();
 }
 
 void DrawStartScreen(Texture2D startScreen) {
@@ -97,8 +89,8 @@ void DrawGame(Dino* dino, Rectangle obstacle, float groundX1, float groundX2, Te
     dino->DrawHitbox(CheckCollisionRecs(dino->GetRect(), obstacle));
 
     DrawText(TextFormat("Score: %i", score / 5), 10, 10, 20, BLACK);
-    if (topScores[0] > (score / 5))
-        DrawText(TextFormat("HighestScore: %i", topScores[0]), 10, 30, 20, BLACK);
+    if (topscore > (score / 5))
+        DrawText(TextFormat("HighestScore: %i", topscore), 10, 30, 20, BLACK);
     else 
         DrawText(TextFormat("HighestScore: %i", (score / 5)), 10, 30, 20, BLACK);
 
