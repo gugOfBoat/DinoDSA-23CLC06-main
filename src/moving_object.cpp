@@ -29,7 +29,7 @@ bool MovingObject::IsCollision(Dino* dino) const {
 
 void MovingObject::Draw()
 {
-    DrawTextureV(frame, position, WHITE);
+    DrawTextureV(frame, {position.x, position.y + 10} , WHITE);
 }
 
 // Triển khai các phương thức của Item

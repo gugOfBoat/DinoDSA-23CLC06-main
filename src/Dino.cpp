@@ -8,7 +8,7 @@ Dino::Dino() : HP(100, "Graphics/heart.png") {
     frames.push_back(LoadTexture("Graphics/dino2.png"));
 
     position.x = 100;  // Đặt vị trí ban đầu của Dino trên trục x là 100
-    position.y = 450;  // Đặt vị trí ban đầu của Dino trên trục y là 550
+    position.y = 430;  // Đặt vị trí ban đầu của Dino trên trục y là 550
 
     speed = 10;  // Tốc độ di chuyển của Dino
 

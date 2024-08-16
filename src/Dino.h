@@ -18,10 +18,9 @@ public:
     bool isDead();
     void ActivateInvincibility(float duration); // Activate invincibility for a certain duration
     bool IsInvincible() const; // Check if Dino is currently invincible
-
+    Vector2 position;
 private:
     std::vector<Texture2D> frames;
-    Vector2 position;
     int speed;
 
     size_t currentFrame;
