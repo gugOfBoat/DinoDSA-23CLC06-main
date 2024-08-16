@@ -12,13 +12,14 @@ public:
     void Increase(int amount);
     int GetCurrentHP() const;
     bool IsEmpty() const;
+    void resetHP();
 
 private:
     int maxHP;
     int currentHP;
     Texture2D heartTexture;
     Vector2 position; 
-    void resetHP();
+
 };
 
 #endif 

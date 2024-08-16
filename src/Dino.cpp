@@ -8,7 +8,7 @@ Dino::Dino() : HP(100, "Graphics/heart.png") {
     frames.push_back(LoadTexture("Graphics/dino2.png"));
 
     position.x = 100;  // Đặt vị trí ban đầu của Dino trên trục x là 100
-    position.y = 550;  // Đặt vị trí ban đầu của Dino trên trục y là 550
+    position.y = 450;  // Đặt vị trí ban đầu của Dino trên trục y là 550
 
     speed = 10;  // Tốc độ di chuyển của Dino
 
@@ -18,7 +18,7 @@ Dino::Dino() : HP(100, "Graphics/heart.png") {
 
     isJumping = false;  // Biến để kiểm tra Dino có đang nhảy không
     jumpVelocity = 0.0f;  // Tốc độ nhảy ban đầu
-    gravity = 1.5f;  // Lực hấp dẫn ảnh hưởng tới tốc độ rơi của Dino
+    gravity = 1.0f;  // Lực hấp dẫn ảnh hưởng tới tốc độ rơi của Dino
     initialY = position.y;  // Vị trí y ban đầu của Dino (dùng để xác định khi nào Dino chạm đất sau khi nhảy)
 
     isInvincible = false;  // Biến để kiểm tra Dino có đang trong trạng thái bất tử không
@@ -43,7 +43,7 @@ void Dino::Update() {
     // Xử lý việc nhấn phím nhảy (SPACE)
     if (IsKeyPressed(KEY_SPACE) && !isJumping) {
         isJumping = true;
-        jumpVelocity = -25.0f;  // Thiết lập tốc độ nhảy ban đầu
+        jumpVelocity = -30.0f;  // Thiết lập tốc độ nhảy ban đầu
     }
 
     // Xử lý hành động nhảy
