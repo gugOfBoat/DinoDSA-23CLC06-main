@@ -8,12 +8,9 @@
 #include "deque.h"
 #include <chrono>
 
-               
 std::chrono::steady_clock::time_point lastGeneratedTime = std::chrono::steady_clock::now();
 std::random_device rd;
 std::mt19937 gen(rd());  // Initialize the random generator once
-std::uniform_int_distribution<> dist(1, 10);
-
 
 const float windowWidth = 1000;
 const float windowHeight = 600;
@@ -32,7 +29,7 @@ void LoadTopScores() {
 void UpdateTopScores(int newscore) {
     std::ofstream outFile("src/topscores.txt");
     if (score > topscore) {
-        topscore = score;
+        topscore = score / 5;
         outFile << topscore;
     }
     outFile.close();
@@ -55,23 +52,21 @@ void HandleStartScreen(Texture2D startScreen) {
     UnloadTexture(startScreen);
 }
 
-void GenerateInitialMovingObjects(Deque<MovingObject*>& movingObjects, Texture2D cactus1, Texture2D cactus2, Texture2D cactus3, Texture2D appleTex, Texture2D shieldTex) {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dist(1, 10);
+std::uniform_int_distribution<> dist(1, 10);  // Adjusted range for 80-10-10 distribution
 
+void GenerateInitialMovingObjects(Deque<MovingObject*>& movingObjects, Texture2D cactus1, Texture2D cactus2, Texture2D cactus3, Texture2D appleTex, Texture2D shieldTex) {
     for (int i = 0; i < InitialObjectCount; ++i) {
-        Vector2 position = {1000.0f + i * 200, 500.0f};  // Cách đều các objects
+        Vector2 position = {1000.0f + i * 200, 500.0f};  // Positioning objects evenly apart
 
         int randNum = dist(gen);
 
-        if (randNum <= 5) {  // 50% sinh bẫy
+        if (randNum <= 8) {  // 80% chance to generate a Trap
             int trapType = dist(gen) % 3;
             Texture2D selectedCactus = (trapType == 0) ? cactus1 : (trapType == 1) ? cactus2 : cactus3;
             movingObjects.push_back(new Trap(position, selectedCactus, 5));
-        } else if (randNum <= 7) {  // 20% sinh Shield
+        } else if (randNum == 9) {  // 10% chance to generate a Shield
             movingObjects.push_back(new Shield(position, shieldTex, 5));
-        } else {  // 30% sinh Apple
+        } else {  // 10% chance to generate an Apple
             movingObjects.push_back(new Apple(position, appleTex, 5));
         }
     }
@@ -85,13 +80,13 @@ void GenerateNextMovingObject(Deque<MovingObject*>& movingObjects, Texture2D cac
         Vector2 position = {1000.0f, 500.0f};  // Set position at (1000, 500)
         int randNum = dist(gen);  // Generate a random number
 
-        if (randNum <= 5) {  // 50% chance to generate a Trap
+        if (randNum <= 8) {  // 80% chance to generate a Trap
             int trapType = dist(gen) % 3;
             Texture2D selectedCactus = (trapType == 0) ? cactus1 : (trapType == 1) ? cactus2 : cactus3;
             movingObjects.push_back(new Trap(position, selectedCactus, 5));
-        } else if (randNum <= 7) {  // 20% chance to generate a Shield
+        } else if (randNum == 9) {  // 10% chance to generate a Shield
             movingObjects.push_back(new Shield(position, shieldTex, 5));
-        } else {  // 30% chance to generate an Apple
+        } else {  // 10% chance to generate an Apple
             movingObjects.push_back(new Apple(position, appleTex, 5));
         }
 
@@ -99,8 +94,24 @@ void GenerateNextMovingObject(Deque<MovingObject*>& movingObjects, Texture2D cac
     }
 }
 
+void HandleGameOverScreen(Dino* dino) {
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("Game Over", windowWidth / 2 - 100, windowHeight / 2 - 50, 40, RED);
+    DrawText(TextFormat("Score: %i", score / 5), windowWidth / 2 - 50, windowHeight / 2, 20, BLACK);
+    DrawText(TextFormat("Highest Score: %i", topscore), windowWidth / 2 - 50, windowHeight / 2 + 30, 20, BLACK);
+    DrawText("Press SPACE to restart", windowWidth / 2 - 150, windowHeight / 2 + 60, 20, BLACK);
+    EndDrawing();
+
+    if (IsKeyPressed(KEY_SPACE)) {
+        dino->resetHP();
+        score = 0;
+        LoadTopScores();
+    }
+}
+
 void UpdateGame(Dino* dino, Deque<MovingObject*>& movingObjects, float& groundX1, float& groundX2, bool& isPaused, Texture2D stopButton, Texture2D cactus1, Texture2D cactus2, Texture2D cactus3, Texture2D appleTex, Texture2D shieldTex) {
-    if (!isPaused) {
+    if (!isPaused && !dino->isDead()) {
         score += 1;
         dino->Update();
         groundX1 -= 5.0f;
@@ -145,6 +156,11 @@ void UpdateGame(Dino* dino, Deque<MovingObject*>& movingObjects, float& groundX1
             isPaused = true;
         }
     }
+
+    if (dino->isDead()) {
+        UpdateTopScores(score / 5);
+        HandleGameOverScreen(dino);
+    }
 }
 
 void DrawGame(Dino* dino, Deque<MovingObject*>& movingObjects, float groundX1, float groundX2, Texture2D groundTexture, Texture2D stopButton) {
@@ -154,13 +170,13 @@ void DrawGame(Dino* dino, Deque<MovingObject*>& movingObjects, float groundX1, f
     DrawTextureEx(groundTexture, {groundX1, windowHeight - groundTexture.height}, 0.0f, 1.0f, WHITE);
     DrawTextureEx(groundTexture, {groundX2, windowHeight - groundTexture.height}, 0.0f, 1.0f, WHITE);
 
-    if (!movingObjects.isEmpty()) {
+    if (!dino->isDead() && !movingObjects.isEmpty()) {
         MovingObject* frontObject = movingObjects.front();
         frontObject->Draw();
     }
 
     dino->Draw();
-    dino->DrawHitbox(false); // Adjust this if needed to display hitboxes
+    // dino->DrawHitbox(true); // Adjust this if needed to display hitboxes
 
     DrawText(TextFormat("Score: %i", score / 5), 10, 10, 20, BLACK);
     if (topscore > (score / 5))
@@ -171,8 +187,7 @@ void DrawGame(Dino* dino, Deque<MovingObject*>& movingObjects, float groundX1, f
     DrawTexture(stopButton, 950, 0, WHITE);
 
     if (dino->isDead()) {
-        UpdateTopScores(score / 5);
-        DrawText("Game Over", windowWidth / 2 - 100, windowHeight / 2, 40, RED);
+        HandleGameOverScreen(dino);
     }
 
     EndDrawing();
@@ -207,16 +222,38 @@ int main() {
     float groundX1 = 0;
     float groundX2 = windowWidth;
     bool isPaused = false;
+    bool gameOver = false;  // Biến để theo dõi trạng thái game over
 
     Deque<MovingObject*> movingObjects;
     GenerateInitialMovingObjects(movingObjects, cactus1, cactus2, cactus3, appleTex, shieldTex);
 
     while (!WindowShouldClose()) {
-        if (!dino->isDead()) {
-            UpdateGame(dino, movingObjects, groundX1, groundX2, isPaused, stopButton, cactus1, cactus2, cactus3, appleTex, shieldTex);
-            DrawGame(dino, movingObjects, groundX1, groundX2, groundTexture, stopButton);
+        if (!gameOver) {
+            if (!dino->isDead()) {
+                UpdateGame(dino, movingObjects, groundX1, groundX2, isPaused, stopButton, cactus1, cactus2, cactus3, appleTex, shieldTex);
+                DrawGame(dino, movingObjects, groundX1, groundX2, groundTexture, stopButton);
+            } else {
+                gameOver = true;
+            }
         } else {
-            break;
+            BeginDrawing();
+            ClearBackground(WHITE);
+            DrawText("Game Over", windowWidth / 2 - 100, windowHeight / 2, 40, RED);
+            DrawText("Press SPACE to Restart", windowWidth / 2 - 150, windowHeight / 2 + 50, 20, BLACK);
+            DrawText(TextFormat("Final Score: %i", score / 5), windowWidth / 2 - 100, windowHeight / 2 + 100, 20, BLACK);
+            EndDrawing();
+
+            if (IsKeyPressed(KEY_SPACE)) {
+                // Reset lại trạng thái trò chơi
+                delete dino;
+                dino = new Dino();
+                score = 0;
+                groundX1 = 0;
+                groundX2 = windowWidth;
+                movingObjects.clear();  // Xóa các đối tượng đang tồn tại
+                GenerateInitialMovingObjects(movingObjects, cactus1, cactus2, cactus3, appleTex, shieldTex);
+                gameOver = false;  // Đặt lại trạng thái gameOver
+            }
         }
     }
 
