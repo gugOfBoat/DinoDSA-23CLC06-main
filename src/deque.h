@@ -1,149 +1,152 @@
 #ifndef DEQUE_H
 #define DEQUE_H
 
-#include <stdexcept>
-
-template <typename T>
-class Deque {
+template <class DataType>
+class DequeNode
+{
 public:
-    // Constructor with default capacity
-    Deque(int capacity = 100);
-    
-    // Destructor
-    ~Deque();
-    
-    // Push element to the back of the deque
-    void push_back(const T& item);
-    
-    // Push element to the front of the deque
-    void push_front(const T& item);
-    
-    // Pop element from the back of the deque
-    void pop_back();
-    
-    // Pop element from the front of the deque
-    void pop_front();
-    
-    // Get the front element
-    T& front();
-    
-    // Get the back element
-    T& back();
-    
-    // Check if the deque is empty
-    bool isEmpty() const;
-    
-    // Clear the deque
-    void clear();
-    
-    // Get the current size of the deque
-    int size() const;
-    
-    // Overloaded operator []
-    T& operator[](int index);
-    const T& operator[](int index) const;
-
-private:
-    T* data;           // Array to store the deque elements
-    int frontIdx;      // Index of the front element
-    int backIdx;       // Index of the next available position at the back
-    int numElements;   // Current number of elements in the deque
-    int capacity;      // Capacity of the deque
+    DataType data;
+    DequeNode<DataType> *next;
+    DequeNode(DataType in_data, DequeNode<DataType> *in_next = nullptr) : data(in_data), next(in_next){}
 };
 
-// Definitions of the template functions
-template <typename T>
-Deque<T>::Deque(int cap)
-    : capacity(cap), numElements(0), frontIdx(0), backIdx(0) {
-    data = new T[capacity];
+template <class DataType>
+class Deque
+{
+private:
+    DataType a;
+    DequeNode<DataType> *head;
+    DequeNode<DataType> *tail;
+    int size;
+public:
+    Deque();
+    ~Deque();
+    bool isEmpty();
+    void push_back(DataType data);
+    void push_front(DataType data);
+    void pop_back();
+    void pop_front();
+    DataType &front();
+    DataType &back();
+    void clear();
+};
+
+template <class DataType>
+Deque<DataType>::Deque()
+{
+    head = nullptr;
+    tail = nullptr;
+    size = 0;
 }
 
-template <typename T>
-Deque<T>::~Deque() {
-    delete[] data;
+template <class DataType>
+Deque<DataType>::~Deque()
+{
+    clear();
 }
 
-template <typename T>
-void Deque<T>::push_back(const T& element) {
-    if (numElements == capacity) {
-        throw std::overflow_error("Deque is full");
+template <class DataType>
+void Deque<DataType>::clear()
+{
+    while (head != nullptr)
+    {
+        auto next = head->next;
+        delete head;
+        head = next;
     }
-    data[backIdx] = element;
-    backIdx = (backIdx + 1) % capacity;
-    numElements++;
+    tail = nullptr;
 }
 
-template <typename T>
-void Deque<T>::push_front(const T& element) {
-    if (numElements == capacity) {
-        throw std::overflow_error("Deque is full");
+template <class DataType>
+bool Deque<DataType>::isEmpty()
+{
+    return (size == 0);
+}
+
+template <class DataType>
+void Deque<DataType>::push_back(DataType data)
+{
+    DequeNode<DataType> * newNode = new DequeNode<DataType>(data);
+    if (head == nullptr)
+    {
+        head = newNode;
+        tail = newNode;
     }
-    frontIdx = (frontIdx - 1 + capacity) % capacity;
-    data[frontIdx] = element;
-    numElements++;
-}
-
-template <typename T>
-void Deque<T>::pop_back() {
-    if (numElements > 0) {
-        backIdx = (backIdx - 1 + capacity) % capacity;
-        numElements--;
-    } else {
-        throw std::underflow_error("Deque is empty");
+    else
+    {
+        tail->next = newNode;
+        tail = newNode;
     }
+    ++size;
 }
-
-template <typename T>
-void Deque<T>::pop_front() {
-    if (numElements > 0) {
-        frontIdx = (frontIdx + 1) % capacity;
-        numElements--;
-    } else {
-        throw std::underflow_error("Deque is empty");
+template <class DataType>
+void Deque<DataType>::push_front(DataType data)
+{
+    auto newNode = new DequeNode<DataType>(data);
+    if (head == nullptr)
+    {
+        head = newNode;
+        tail = newNode;
     }
-}
-
-template <typename T>
-T& Deque<T>::front() {
-    if (isEmpty()) {
-        throw std::underflow_error("Deque is empty");
+    else
+    {
+        newNode->next = head;
+        head = newNode;
     }
-    return data[frontIdx];
+    ++size;
 }
 
-template <typename T>
-T& Deque<T>::back() {
-    if (isEmpty()) {
-        throw std::underflow_error("Deque is empty");
+template <class DataType>
+void Deque<DataType>::pop_front()
+{
+    if (head == nullptr)
+        return;
+    if (head == tail)
+    {
+        delete head;
+        head = nullptr;
+        tail = nullptr;
     }
-    return data[(backIdx - 1 + capacity) % capacity];
+    else
+    {
+        auto newHead = head->next;
+        delete head;
+        head = newHead;
+    }
+    --size;
+}
+template <class DataType>
+void Deque<DataType>::pop_back()
+{
+    if (head == nullptr)
+        return;
+    if (head == tail)
+    {
+        delete head;
+        head = nullptr;
+        tail = nullptr;
+    }
+    else
+    {
+        auto newTail = head;
+        while (newTail->next != tail)
+            newTail = newTail->next;
+        delete tail;
+        tail = newTail;
+    }
+    --size;
 }
 
-template <typename T>
-bool Deque<T>::isEmpty() const {
-    return numElements == 0;
+template <class DataType>
+DataType& Deque<DataType>::front()
+{
+    return head->data;
 }
 
-template <typename T>
-void Deque<T>::clear() {
-    frontIdx = 0;
-    backIdx = 0;
-    numElements = 0;
+template <class DataType>
+DataType& Deque<DataType>::back()
+{
+    return tail->data;
 }
 
-template <typename T>
-int Deque<T>::size() const {
-    return numElements;
-}
-
-template <typename T>
-T& Deque<T>::operator[](int index) {
-    return data[(frontIdx + index) % capacity];
-}
-
-template <typename T>
-const T& Deque<T>::operator[](int index) const {
-    return data[(frontIdx + index) % capacity];
-}
-
-#endif // DEQUE_H
+#endif
