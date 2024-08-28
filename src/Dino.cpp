@@ -39,10 +39,11 @@ void Dino::Draw() {
     DrawHP();  // Vẽ thanh máu của Dino
 }
 
-void Dino::Update() {
+void Dino::Update(Sound jumpSound) {
     // Xử lý việc nhấn phím nhảy (SPACE)
     if (IsKeyPressed(KEY_SPACE) && !isJumping) {
         isJumping = true;
+        PlaySound(jumpSound);
         jumpVelocity = -30.0f;  // Thiết lập tốc độ nhảy ban đầu
     }
 
