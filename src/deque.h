@@ -14,7 +14,6 @@ template <class DataType>
 class Deque
 {
 private:
-    DataType a;
     DequeNode<DataType> *head;
     DequeNode<DataType> *tail;
     int size;

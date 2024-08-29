@@ -206,16 +206,16 @@ int main() {
     InitWindow(windowWidth, windowHeight, "Dino Run");
     SetTargetFPS(60);
 
-    Texture2D startScreen = LoadTexture("Graphics/started.png");
+    Texture2D startScreen(LoadTexture("Graphics/started.png"));
     HandleStartScreen(startScreen);
 
-    Texture2D groundTexture = LoadTexture("Graphics/ground.png");
-    Texture2D stopButton = LoadTexture("Graphics/stopButton.png");
-    Texture2D cactus1 = LoadTexture("Graphics/Cactus1.png");
-    Texture2D cactus2 = LoadTexture("Graphics/Cactus2.png");
-    Texture2D cactus3 = LoadTexture("Graphics/Cactus3.png");
-    Texture2D appleTex = LoadTexture("Graphics/Apple.png");
-    Texture2D shieldTex = LoadTexture("Graphics/Shield.png");
+    Texture2D groundTexture(LoadTexture("Graphics/ground.png"));
+    Texture2D stopButton(LoadTexture("Graphics/stopButton.png"));
+    Texture2D cactus1(LoadTexture("Graphics/Cactus1.png"));
+    Texture2D cactus2(LoadTexture("Graphics/Cactus2.png"));
+    Texture2D cactus3(LoadTexture("Graphics/Cactus3.png"));
+    Texture2D appleTex(LoadTexture("Graphics/Apple.png"));
+    Texture2D shieldTex(LoadTexture("Graphics/Shield.png"));
 
     Dino* dino = new Dino();
 
