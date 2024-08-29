@@ -11,7 +11,7 @@ public:
     Dino();
     ~Dino();
     void Draw();
-    void Update();
+    void Update(Sound jumpSound);
     Rectangle GetRect();
     void DrawHitbox(bool isColliding);
     void TakeDamage(int damage);

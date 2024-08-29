@@ -8,6 +8,7 @@
 #include "deque.h"
 #include <chrono>
 
+
 std::chrono::steady_clock::time_point lastGeneratedTime = std::chrono::steady_clock::now();
 std::random_device rd;
 std::mt19937 gen(rd());  // Initialize the random generator once
@@ -110,10 +111,10 @@ void HandleGameOverScreen(Dino* dino) {
     }
 }
 
-void UpdateGame(Dino* dino, Deque<MovingObject*>& movingObjects, float& groundX1, float& groundX2, bool& isPaused, Texture2D stopButton, Texture2D cactus1, Texture2D cactus2, Texture2D cactus3, Texture2D appleTex, Texture2D shieldTex) {
+void UpdateGame(Dino* dino, Deque<MovingObject*>& movingObjects, float& groundX1, float& groundX2, bool& isPaused, Texture2D stopButton, Texture2D cactus1, Texture2D cactus2, Texture2D cactus3, Texture2D appleTex, Texture2D shieldTex, Sound collisionSound, Sound jumpSound, Sound heal, Sound shield, Sound equip) {
     if (!isPaused && !dino->isDead()) {
         score += 1;
-        dino->Update();
+        dino->Update(jumpSound);
         groundX1 -= 5.0f;
         groundX2 -= 5.0f;
 
@@ -136,10 +137,16 @@ void UpdateGame(Dino* dino, Deque<MovingObject*>& movingObjects, float& groundX1
 
             if (frontObject->IsCollision(dino)) {
                 if (dynamic_cast<Trap*>(frontObject)) {
-                    dino->Decrease(50);
+                    if (!dino -> IsInvincible()){
+                        dino->Decrease(50);
+                        PlaySound(collisionSound);
+                    }
+                    else PlaySound(shield);
                 } else if (dynamic_cast<Apple*>(frontObject)) {
                     dino->Increase(50);
+                    PlaySound(heal);
                 } else if (dynamic_cast<Shield*>(frontObject)) {
+                    PlaySound(equip);
                     dino->ActivateInvincibility(10.0f);
                 }
                 movingObjects.pop_front();  // Remove object after handling collision
@@ -202,6 +209,13 @@ void Cleanup(Texture2D groundTexture, Texture2D stopButton, Dino* dino) {
 }
 
 int main() {
+    InitAudioDevice();
+    Sound collisionSound = LoadSound("Audio/collisionSound.wav");
+    Sound jumpSound = LoadSound("Audio/jumpSound.wav");
+    Sound healSound = LoadSound("Audio/heal.wav");
+    Sound shield = LoadSound("Audio/shield.wav");
+    Sound equip = LoadSound("Audio/equip.wav");
+    SetSoundVolume(collisionSound, 1.0f);
     LoadTopScores();
     InitWindow(windowWidth, windowHeight, "Dino Run");
     SetTargetFPS(60);
@@ -217,6 +231,10 @@ int main() {
     Texture2D appleTex(LoadTexture("Graphics/Apple.png"));
     Texture2D shieldTex(LoadTexture("Graphics/Shield.png"));
 
+    
+
+
+
     Dino* dino = new Dino();
 
     float groundX1 = 0;
@@ -230,7 +248,7 @@ int main() {
     while (!WindowShouldClose()) {
         if (!gameOver) {
             if (!dino->isDead()) {
-                UpdateGame(dino, movingObjects, groundX1, groundX2, isPaused, stopButton, cactus1, cactus2, cactus3, appleTex, shieldTex);
+                UpdateGame(dino, movingObjects, groundX1, groundX2, isPaused, stopButton, cactus1, cactus2, cactus3, appleTex, shieldTex, collisionSound, jumpSound, healSound, shield, equip);
                 DrawGame(dino, movingObjects, groundX1, groundX2, groundTexture, stopButton);
             } else {
                 gameOver = true;
@@ -258,6 +276,7 @@ int main() {
     }
 
     Cleanup(groundTexture, stopButton, dino);
-
+    UnloadSound(collisionSound);
+    UnloadSound(jumpSound);
     return 0;
 }
