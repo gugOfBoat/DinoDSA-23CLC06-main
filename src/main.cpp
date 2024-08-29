@@ -258,7 +258,7 @@ int main() {
             ClearBackground(WHITE);
             DrawText("Game Over", windowWidth / 2 - 100, windowHeight / 2, 40, RED);
             DrawText("Press SPACE to Restart", windowWidth / 2 - 150, windowHeight / 2 + 50, 20, BLACK);
-            DrawText(TextFormat("Final Score: %i", score), windowWidth / 2 - 100, windowHeight / 2 + 100, 20, BLACK);
+            DrawText(TextFormat("Final Score: %i", score/5), windowWidth / 2 - 100, windowHeight / 2 + 100, 20, BLACK);
             EndDrawing();
 
             if (IsKeyPressed(KEY_SPACE)) {
